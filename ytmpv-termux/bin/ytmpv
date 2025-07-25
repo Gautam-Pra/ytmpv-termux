@@ -1,0 +1,6 @@
+#!/data/data/com.termux/files/usr/bin/bash
+echo -n "Enter YouTube URL: "; read url
+videourl=$(yt-dlp -f "best[height<=480]" -g "$url")
+title=$(yt-dlp --get-title "$url")
+echo "Now playing: $title"
+mpv --speed=1.7 --title="$title" "$videourl"
