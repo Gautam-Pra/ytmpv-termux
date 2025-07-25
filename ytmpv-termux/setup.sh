@@ -1,23 +1,36 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-# Create bin directory if it doesn't exist
-mkdir -p $PREFIX/bin
+echo -e "\n🔄 Updating Termux packages..."
+pkg update -y && pkg upgrade -y
 
-# Link ytmpv script (MPV method)
+echo -e "\n📦 Installing dependencies..."
+pkg install -y python mpv ffmpeg git curl
+
+echo -e "\n🐍 Installing yt-dlp via pip..."
+pip install --upgrade pip
+pip install --upgrade yt-dlp
+
+# Create ~/bin if not exists and ensure it's in PATH
+mkdir -p $PREFIX/bin
+if ! echo $PATH | grep -q "$PREFIX/bin"; then
+    echo 'export PATH=$PREFIX/bin:$PATH' >> ~/.bashrc
+    source ~/.bashrc
+fi
+
+# Install ytmpv (MPV method)
 if [ -f ./bin/ytmpv.sh ]; then
     chmod +x ./bin/ytmpv.sh
     ln -sf $(pwd)/bin/ytmpv.sh $PREFIX/bin/ytmpv
     echo "✅ Installed: ytmpv (MPV method)"
 fi
 
-# Link ytvlc script (VLC/termux-open-url method)
+# Install ytvlc (termux-open-url method)
 if [ -f ./bin/ytvlc.sh ]; then
     chmod +x ./bin/ytvlc.sh
     ln -sf $(pwd)/bin/ytvlc.sh $PREFIX/bin/ytvlc
-    echo "✅ Installed: ytvlc (VLC method)"
+    echo "✅ Installed: ytvlc (VLC/external method)"
 fi
 
-# Confirm done
 echo -e "\n🎉 Setup complete! You can now run:"
-echo "👉 ytmpv (for mpv inside Termux)"
-echo "👉 ytvlc (to open in VLC or browser)"
+echo "👉 ytmpv  - plays in MPV (if supported)"
+echo "👉 ytvlc  - opens stream in VLC or browser"
